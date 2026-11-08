@@ -1,0 +1,271 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Reserva no encontrada · Caso de estudio UX · Sarah Arlette Uribe</title>
+<meta name="description" content="Caso de estudio UX/UI: cuando el pago y la reserva cuentan historias distintas. Recorrido real, hallazgos, arreglos priorizados y prototipo navegable.">
+<style>
+:root{--bg:#fbfaf8;--card:#fff;--fg:#1d2433;--muted:#5b6475;--line:#e3e1dc;--accent:#3b4cca;--accent-soft:#eceefc;--warn:#fff4dc;--warn-line:#d9a23a;--ok:#e3f5ea;--ok-line:#2e9d5b;--bad:#fbe9e7;--bad-line:#c0392b}
+@media (prefers-color-scheme:dark){:root{--bg:#12151b;--card:#1b2029;--fg:#e8ebf1;--muted:#9aa3b2;--line:#2f3642;--accent:#8a97ff;--accent-soft:#252b4d;--warn:#3a3020;--ok:#1d3527;--bad:#3a1f1c}}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--fg);font:17px/1.65 -apple-system,"Segoe UI",Helvetica,Arial,sans-serif}
+a{color:var(--accent)}
+.wrap{max-width:780px;margin:0 auto;padding:0 20px}
+header.hero{padding:64px 0 40px;border-bottom:1px solid var(--line)}
+.eyebrow{font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);margin:0 0 12px}
+h1{font-size:clamp(30px,5vw,44px);line-height:1.15;margin:0 0 16px;letter-spacing:-.02em}
+.lead{font-size:19px;color:var(--muted);margin:0 0 24px}
+.status{display:inline-flex;align-items:center;gap:8px;background:var(--warn);border:1px solid var(--warn-line);border-radius:999px;padding:6px 14px;font-size:14px;font-weight:600}
+.status::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--warn-line)}
+.cta{display:flex;gap:12px;flex-wrap:wrap;margin-top:28px}
+.btn{display:inline-block;padding:12px 22px;border-radius:999px;background:var(--accent);color:#fff;text-decoration:none;font-weight:600}
+.btn.sec{background:transparent;color:var(--accent);border:1px solid var(--accent)}
+.meta{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:16px;margin:32px 0 0;padding:0;list-style:none;font-size:14px}
+.meta b{display:block;font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+section{padding:48px 0;border-bottom:1px solid var(--line)}
+h2{font-size:26px;margin:0 0 16px;letter-spacing:-.01em}
+h3{font-size:19px;margin:28px 0 10px}
+.note{font-size:14px;color:var(--muted)}
+.disclaimer{font-size:14px;color:var(--muted);border-left:3px solid var(--line);padding-left:12px;margin:24px 0 0}
+.gallery{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin:20px 0}
+figure{margin:0}
+figure img{width:100%;height:320px;object-fit:cover;object-position:top;border-radius:12px;border:1px solid var(--line);background:var(--card)}
+figcaption{font-size:13px;color:var(--muted);margin-top:6px}
+table{width:100%;border-collapse:collapse;font-size:15px;margin:16px 0}
+th,td{text-align:left;padding:10px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:13px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted)}
+.tablewrap{overflow-x:auto}
+.timeline{list-style:none;padding:0;margin:20px 0;counter-reset:t}
+.timeline li{position:relative;padding:0 0 18px 44px;counter-increment:t}
+.timeline li::before{content:counter(t);position:absolute;left:0;top:0;width:28px;height:28px;border-radius:50%;background:var(--accent-soft);color:var(--accent);font-weight:700;font-size:14px;display:grid;place-items:center}
+.timeline li::after{content:"";position:absolute;left:13px;top:30px;bottom:2px;width:2px;background:var(--line)}
+.timeline li:last-child::after{display:none}
+.timeline li.bad::before{background:var(--bad);color:var(--bad-line)}
+.timeline li.good::before{background:var(--ok);color:var(--ok-line)}
+.findings{list-style:none;padding:0;margin:0;display:grid;gap:14px}
+.findings li{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px}
+.findings b{display:block;margin-bottom:4px}
+.states{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin:16px 0}
+.state{border-radius:12px;padding:14px;font-size:15px;border-left:4px solid}
+.state b{display:block}
+.state.w{background:var(--warn);border-color:var(--warn-line)}
+.state.o{background:var(--ok);border-color:var(--ok-line)}
+.state.x{background:var(--bad);border-color:var(--bad-line)}
+.pill{display:inline-block;font-size:12px;font-weight:700;padding:2px 8px;border-radius:999px;background:var(--accent-soft);color:var(--accent);white-space:nowrap}
+.proto{background:var(--accent-soft);border-radius:16px;padding:24px;margin-top:20px}
+.proto ul{margin:10px 0 18px;padding-left:20px}
+.next{list-style:none;padding:0;margin:16px 0;display:grid;gap:12px}
+.next li{display:flex;gap:14px;align-items:flex-start;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+.next i{font-style:normal;flex:none;width:24px;height:24px;border-radius:50%;display:grid;place-items:center;font-size:13px;font-weight:700}
+.next .d i{background:var(--ok-line);color:#fff}
+.next .p i{background:var(--warn-line);color:#fff}
+.next .w i{border:2px solid var(--line);color:var(--muted)}
+footer{padding:40px 0 64px;font-size:14px;color:var(--muted)}
+</style>
+</head>
+<body>
+
+<header class="hero">
+<div class="wrap">
+  <p class="eyebrow">Caso de estudio UX/UI</p>
+  <h1>Reserva no encontrada: cuando el pago y la reserva cuentan historias distintas</h1>
+  <p class="lead">Una pasajera compró 3 boletos de Volaris en la app de Expedia. La app le dijo que la compra falló, su banco le dijo que el cargo estaba aprobado y la aerolínea le dijo que su reserva no existía. Analicé dónde se rompe la comunicación y propongo 7 arreglos priorizados, con un prototipo navegable.</p>
+  <span class="status">En proceso: falta la prueba con usuarios</span>
+  <div class="cta">
+    <a class="btn" href="prototipo/">Ver el prototipo</a>
+    <a class="btn sec" href="#siguientes-pasos">Siguientes pasos</a>
+  </div>
+  <ul class="meta">
+    <li><b>Rol</b>Investigación, UX y UI</li>
+    <li><b>Especialidad</b>UX-UI</li>
+    <li><b>Fuente</b>Experiencia real de una usuaria</li>
+    <li><b>Entregables</b>Hallazgos, flujo, arreglos y prototipo</li>
+  </ul>
+  <p class="disclaimer">Propuesta no solicitada, sin relación con Expedia ni con Volaris. Datos personales, fechas, ruta y montos ocultos o modificados con permiso de la usuaria. No busco culpables ni sé la causa técnica: me enfoco en lo que la persona vio.</p>
+</div>
+</header>
+
+<main>
+<section>
+<div class="wrap">
+  <h2>Objetivo</h2>
+  <p>Que la persona sepa en todo momento en qué estado están su pago, su reserva y su boleto, y que nunca tenga que acudir a su banco para entender qué pasó con su compra.</p>
+  <h3>Preguntas clave</h3>
+  <ul>
+    <li>¿Cómo distingue la persona entre "me cobraron", "tengo reserva" y "tengo boleto"?</li>
+    <li>¿Qué debe decir un error de pago cuando el banco ya aprobó el cargo?</li>
+    <li>¿Cómo debe verse una reserva que existe pero no está lista, o que se canceló?</li>
+    <li>¿Qué parte depende del diseño y cuál de sistemas internos entre agencia y aerolínea?</li>
+  </ul>
+  <h3>Plan de trabajo</h3>
+  <ol>
+    <li><b>Exploración:</b> entrevista por mensajes con la usuaria, revisión de sus capturas y sondeo informal.</li>
+    <li><b>Diagnóstico:</b> reconstrucción del recorrido y puntos donde se rompe.</li>
+    <li><b>Propuesta:</b> flujo rediseñado y arreglos priorizados por responsable.</li>
+    <li><b>Prototipo:</b> pantallas navegables de la agencia, la aerolínea y el correo.</li>
+    <li><b>Prueba:</b> 3 tareas con usuarios. <span class="pill">En curso</span></li>
+  </ol>
+</div>
+</section>
+
+<section>
+<div class="wrap">
+  <h2>Investigación</h2>
+  <h3>Entrevista con la usuaria</h3>
+  <ul>
+    <li>Lleva años usando la app de Expedia en EE. UU. Meses antes compró vuelos de otra aerolínea mexicana en la misma app sin problemas.</li>
+    <li>Compraba desde México un vuelo a EE. UU. con tarjeta estadounidense. Su banco aprobó el cargo.</li>
+    <li>Escribió su nombre como aparece en su pasaporte. No cree que el apellido haya sido la causa.</li>
+    <li>No volvió a intentar en Expedia porque la experiencia le pareció rara.</li>
+  </ul>
+
+  <h3>Evidencia</h3>
+  <div class="gallery">
+    <figure><img src="img/00-error-expedia-recreacion.png" alt="Recreación del error de pago: No pudimos completar tu reserva, intenta de nuevo"><figcaption>Checkout de Expedia (recreación con el texto original del error).</figcaption></figure>
+    <figure><img src="img/01-mis-viajes.jpg" alt="Formulario Mis viajes de Volaris con el código oculto"><figcaption>Mis viajes en Volaris: código y apellido.</figcaption></figure>
+    <figure><img src="img/02-booking-not-found.jpg" alt="Modal Booking not found con teléfonos de seis países"><figcaption>"Booking not found": solo teléfonos, sin causa.</figcaption></figure>
+  </div>
+  <div class="tablewrap"><table>
+    <tr><th>Pantalla</th><th>Qué se observa</th></tr>
+    <tr><td>Checkout de Expedia</td><td>"No pudimos completar tu reserva. Espera un momento e intenta de nuevo." No dice si hubo cargo. Invita a reintentar cuando el banco ya aprobó el pago, con riesgo de cobro doble.</td></tr>
+    <tr><td>Mis viajes (Volaris)</td><td>Pide código y apellido. Con el código del correo de Volaris, la reserva no aparece.</td></tr>
+    <tr><td>Booking not found</td><td>No explica la causa ni distingue entre "no existe", "en proceso" o "cancelada". Solo muestra teléfonos de seis países.</td></tr>
+  </table></div>
+  <p class="note">Los correos de Volaris no se conservaron. Según la usuaria, el primero mostraba código y monto pagado; el segundo, monto $0.00, sin mencionar cancelación.</p>
+
+  <h3>Recorrido real</h3>
+  <ol class="timeline">
+    <li>Paga 3 boletos en la app de Expedia.</li>
+    <li class="bad">Expedia muestra "No pudimos completar tu reserva, intenta de nuevo". Al mismo tiempo, su banco le avisa que el cargo está aprobado.</li>
+    <li>Le llega un correo de Volaris con código y monto.</li>
+    <li class="bad">Busca el código en volaris.com: "Booking not found" y una lista de teléfonos.</li>
+    <li class="bad">Primera llamada: le dicen que la reserva no existe.</li>
+    <li>Disputa el cargo con su banco. Recibe el reembolso en 2 a 3 días.</li>
+    <li class="bad">Le llega otro correo de Volaris con monto $0, sin ninguna explicación.</li>
+    <li>Segunda llamada: un agente le explica que ese correo era la cancelación.</li>
+    <li class="good">Compra directo en volaris.com con PayPal, sin problemas.</li>
+  </ol>
+</div>
+</section>
+
+<section>
+<div class="wrap">
+  <h2>Hallazgos</h2>
+  <ul class="findings">
+    <li><b>1. El error de pago contradice al banco.</b>Expedia dice que no se completó y pide reintentar; el banco dice que el cargo está aprobado. La persona no sabe a quién creerle y corre el riesgo de pagar dos veces.</li>
+    <li><b>2. Un código que no lleva a ningún lado.</b>Volaris envió un código que no funcionaba ni en su sitio ni con su propio agente.</li>
+    <li><b>3. "No encontrada" no es un estado útil.</b>La reserva estaba en algún punto intermedio, pero el sitio y el soporte solo podían decir que no existía.</li>
+    <li><b>4. La cancelación llegó como un monto, no como un mensaje.</b>El correo de $0 apareció después de la disputa bancaria y no decía "cancelada".</li>
+    <li><b>5. La usuaria resolvió sola lo que el sistema no explicó.</b>Recuperó su dinero por medio de su banco y supo qué había pasado hasta la segunda llamada.</li>
+  </ul>
+
+  <h3>Lo que no sabemos (hipótesis)</h3>
+  <div class="tablewrap"><table>
+    <tr><th>Hipótesis</th><th>Qué la confirmaría</th></tr>
+    <tr><td>La reserva se creó en Volaris, pero el boleto nunca se emitió</td><td>Registros de emisión</td></tr>
+    <tr><td>El pago quedó retenido entre agencia y aerolínea (por ejemplo, revisión antifraude)</td><td>Registros de pago de Expedia</td></tr>
+    <tr><td>La cancelación fue consecuencia de la disputa bancaria</td><td>Fecha y hora exactas de la cancelación</td></tr>
+  </table></div>
+  <p>No confirmé ninguna. El caso no depende de la causa técnica: en todos los escenarios, la persona debió recibir un estado claro.</p>
+
+  <h3>Qué le costó a cada parte</h3>
+  <ul>
+    <li><b>La usuaria:</b> días sin su dinero, dos llamadas, una disputa bancaria y la desconfianza de volver a usar la agencia para esa aerolínea.</li>
+    <li><b>Expedia:</b> perdió una venta de 3 boletos y la confianza de una clienta de años para este tipo de compra.</li>
+    <li><b>Volaris:</b> al menos dos llamadas de soporte, una cancelación y un reembolso. Recuperó la venta solo porque la clienta insistió y compró directo.</li>
+  </ul>
+
+  <h3>Sondeo informal</h3>
+  <p>Pregunté a compañeros dónde buscan y compran vuelos. Algunos compran directo en la aerolínea; otros comparan en Skyscanner (el más mencionado), Google Flights o agencias en línea. Cuando una compra falla, es fácil irse a otra opción.</p>
+</div>
+</section>
+
+<section>
+<div class="wrap">
+  <h2>Propuesta</h2>
+  <p>Cada estado de la compra tiene un mensaje y un siguiente paso, tanto en la agencia como en la aerolínea.</p>
+  <h3>En la agencia, al pagar</h3>
+  <div class="states">
+    <div class="state o"><b>Confirmada</b>Código y boleto en la misma pantalla.</div>
+    <div class="state w"><b>Pago en verificación</b>"No vuelvas a comprar." Estado por pasos: pago, reserva, boleto.</div>
+    <div class="state x"><b>No se pudo</b>La agencia cancela, libera el cargo y avisa por correo.</div>
+  </div>
+  <h3>En Mis viajes de la aerolínea</h3>
+  <div class="states">
+    <div class="state o"><b>Confirmada</b>Gestiona su viaje.</div>
+    <div class="state w"><b>En proceso por agencia</b>"Tus lugares están apartados; el boleto llegará por correo."</div>
+    <div class="state x"><b>Cancelada</b>Motivo y qué pasa con el dinero.</div>
+    <div class="state w"><b>No encontrada</b>Causas probables y chat.</div>
+  </div>
+
+  <h3>Arreglos priorizados</h3>
+  <div class="tablewrap"><table>
+    <tr><th>#</th><th>Responsable</th><th>Arreglo</th><th>Impacto</th><th>Esfuerzo</th></tr>
+    <tr><td>1</td><td>Agencia</td><td>Error de pago que reconoce el posible cargo y pide no reintentar</td><td>Alto</td><td>Bajo</td></tr>
+    <tr><td>2</td><td>Aerolínea</td><td>Correo de cancelación explícito: estado, motivo, reembolso y siguiente paso</td><td>Alto</td><td>Bajo</td></tr>
+    <tr><td>3</td><td>Aerolínea</td><td>Error útil con causas probables (incluye "compraste por agencia") y chat</td><td>Medio</td><td>Bajo</td></tr>
+    <tr><td>4</td><td>Agencia</td><td>Pantalla de estado con pasos: pago, reserva con aerolínea, boleto</td><td>Alto</td><td>Medio</td></tr>
+    <tr><td>5</td><td>Agencia</td><td>Aviso proactivo y liberación del cargo si la reserva no se confirma</td><td>Alto</td><td>Medio</td></tr>
+    <tr><td>6</td><td>Aerolínea</td><td>Estados distintos en Mis viajes: en proceso por agencia, cancelada, no encontrada</td><td>Alto</td><td>Medio</td></tr>
+    <tr><td>7</td><td>Soporte</td><td>Que el agente vea reservas de agencia en proceso y tenga un guion para "cargo sin reserva"</td><td>Alto</td><td>Alto</td></tr>
+  </table></div>
+  <p><b>Primero, los arreglos 1 a 3:</b> son cambios de contenido sobre pantallas y correos que ya existen. Del 4 al 7 requieren coordinar sistemas entre agencia y aerolínea, pero son los que evitan que la persona termine en su banco.</p>
+
+  <div class="proto" id="prototipo">
+    <h3 style="margin-top:0">Prototipo navegable</h3>
+    <p>9 pantallas con marcas genéricas que recorren los tres puntos de contacto:</p>
+    <ul>
+      <li><b>Agencia:</b> pago en verificación y estado de la compra.</li>
+      <li><b>Aerolínea:</b> con el código <b>AGE123</b> ves una reserva en proceso por agencia; con <b>CAN123</b>, una cancelada; con un solo apellido, el error útil.</li>
+      <li><b>Correo:</b> cancelación explícita comparada con el correo de $0.</li>
+    </ul>
+    <a class="btn" href="prototipo/">Abrir el prototipo</a>
+  </div>
+</div>
+</section>
+
+<section id="siguientes-pasos">
+<div class="wrap">
+  <h2>Siguientes pasos</h2>
+  <p>El caso está publicado con lo trabajado hasta hoy. Falta validar la propuesta con usuarios para completar los resultados con métricas.</p>
+  <ul class="next">
+    <li class="d"><i>✓</i><div><b>Investigación, hallazgos y propuesta</b><br><span class="note">Recorrido real, 5 hallazgos, flujo rediseñado y 7 arreglos priorizados.</span></div></li>
+    <li class="d"><i>✓</i><div><b>Prototipo navegable</b><br><span class="note">9 pantallas de agencia, aerolínea y correo.</span></div></li>
+    <li class="p"><i>…</i><div><b>Prueba de usabilidad en Useberry</b><br><span class="note">3 tareas. Mediré tasa de éxito, tiempo y clics por tarea, más una calificación de confianza del 1 al 5.</span></div></li>
+    <li class="w"><i>4</i><div><b>Resultados y ajustes</b><br><span class="note">Actualizar esta página con las métricas, frases de los participantes y los cambios al prototipo.</span></div></li>
+  </ul>
+
+  <h3>Plan de prueba</h3>
+  <div class="tablewrap"><table>
+    <tr><th>Tarea</th><th>Instrucción</th><th>Éxito</th></tr>
+    <tr><td>1</td><td>Compraste 3 boletos en una app de viajes. Al pagar ves esta pantalla y tu banco te avisa de un cargo. ¿Qué harías?</td><td>No reintenta la compra; revisa el estado o espera el correo</td></tr>
+    <tr><td>2</td><td>Te llegó un correo de la aerolínea con el código AGE123. Tu apellido es García López. Revisa tu reserva.</td><td>Entiende que su reserva existe y está en proceso, sin llamar</td></tr>
+    <tr><td>3</td><td>Recibiste este correo. Explica qué pasó y qué pasará con tu dinero.</td><td>Dice que se canceló, por qué y quién gestiona el reembolso</td></tr>
+  </table></div>
+  <p class="note">Al final: del 1 al 5, ¿qué tan seguro te sentirías de que tu dinero y tu viaje están a salvo?</p>
+</div>
+</section>
+
+<section>
+<div class="wrap">
+  <h2>Lo que aprendí hasta ahora</h2>
+  <ul>
+    <li>Cuando una compra pasa por dos empresas, la persona no ve la frontera entre ellas. Ve un solo servicio que le cobró y no le dio nada.</li>
+    <li>Un mensaje de error y un correo son parte del diseño. Aquí, un "intenta de nuevo" y un "$0.00" bastaron para perder la confianza.</li>
+    <li>La disputa bancaria fue el único canal que funcionó. El problema no fue solo técnico, también de comunicación.</li>
+  </ul>
+  <p class="note"><b>Con más tiempo:</b> recuperar los correos originales, entrevistar a más personas con cargos sin reserva y llevar el prototipo a alta fidelidad.</p>
+</div>
+</section>
+</main>
+
+<footer>
+<div class="wrap">
+  <p>Sarah Arlette Uribe · UX/UI · Caso en proceso, última actualización: noviembre 2026.</p>
+</div>
+</footer>
+
+</body>
+</html>

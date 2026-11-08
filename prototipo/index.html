@@ -1,0 +1,273 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Prototipo: Reserva no encontrada</title>
+<style>
+:root{--bg:#eef0f4;--card:#fff;--fg:#1d2433;--muted:#5b6475;--line:#d9dde5;--brand:#3b4cca;--brand-soft:#e8ebfb;--agency:#0f766e;--agency-soft:#e0f2ef;--warn:#fff4dc;--warn-line:#e8b54a;--ok:#e3f5ea;--ok-line:#2e9d5b;--err:#c0392b;--err-soft:#fbe9e7}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#11141a;--card:#1b2029;--fg:#e8ebf1;--muted:#9aa3b2;--line:#323a47;--brand:#7d8cff;--brand-soft:#262d52;--agency:#4fd1c0;--agency-soft:#17332f;--warn:#3a3020;--warn-line:#c9952f;--ok:#1d3527;--ok-line:#4cc27c;--err-soft:#3a1f1c}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.5 -apple-system,Segoe UI,Helvetica,Arial,sans-serif}
+.wrap{max-width:1000px;margin:0 auto;padding:20px 16px 48px;display:flex;gap:32px;flex-wrap:wrap;justify-content:center;align-items:flex-start}
+.note{width:100%;text-align:center;color:var(--muted);font-size:13px;margin:0}
+.phone{position:relative;width:360px;max-width:100%;height:720px;background:var(--card);border:10px solid #1d2433;border-radius:40px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 12px 40px rgba(0,0,0,.15)}
+.appbar{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid var(--line)}
+.logo{font-weight:800;font-size:18px;letter-spacing:-.3px}
+.logo span{color:var(--brand)}
+.phone[data-ctx="agencia"] .logo span{color:var(--agency)}
+.ctx{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);border:1px solid var(--line);border-radius:20px;padding:2px 8px}
+.top{padding:10px 18px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:10px;font-weight:700}
+.top button{background:none;border:0;color:var(--brand);font-size:20px;cursor:pointer;padding:0 4px}
+.screen{display:none;flex:1;overflow-y:auto;padding:20px 18px}
+.screen.on{display:block}
+.hero{background:linear-gradient(180deg,var(--brand-soft),var(--card) 60%)}
+.formcard{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;box-shadow:0 4px 16px rgba(0,0,0,.06)}
+h2{font-size:21px;margin:0 0 6px;line-height:1.25}
+p{margin:0 0 14px}.muted{color:var(--muted);font-size:14px}
+label{display:block;font-size:13px;font-weight:600;margin:14px 0 6px}
+input{width:100%;padding:12px;border:1px solid var(--line);border-radius:10px;font-size:16px;background:var(--card);color:var(--fg)}
+input.bad{border-color:var(--err)}
+.hint{font-size:13px;color:var(--muted);margin-top:6px}
+.hint.flash{background:var(--warn);border-left:3px solid var(--warn-line);padding:6px 8px;border-radius:6px;color:var(--fg)}
+.err{color:var(--err);font-size:13px;margin-top:6px;display:none}
+.btn{display:block;width:100%;padding:13px;border:0;border-radius:24px;background:var(--brand);color:#fff;font-size:16px;font-weight:600;cursor:pointer;margin-top:16px}
+.phone[data-ctx="agencia"] .btn{background:var(--agency)}
+.btn.sec{background:var(--card)!important;color:var(--brand);border:1px solid var(--brand);margin-top:10px}
+.phone[data-ctx="agencia"] .btn.sec{color:var(--agency);border-color:var(--agency)}
+.link{background:none;border:0;color:var(--brand);text-decoration:underline;cursor:pointer;font-size:14px;padding:0;margin-top:14px}
+.box{border-radius:12px;padding:14px;margin:14px 0}
+.box.warn{background:var(--warn);border-left:4px solid var(--warn-line)}
+.box.ok{background:var(--ok);border-left:4px solid var(--ok-line)}
+.box.bad{background:var(--err-soft);border-left:4px solid var(--err)}
+ol.causes{padding-left:20px;margin:8px 0 0}ol.causes li{margin-bottom:8px}
+.trip{border:1px solid var(--line);border-radius:12px;padding:14px;margin-top:10px}
+.trip b{font-size:18px}
+.tag{display:inline-block;font-size:12px;font-weight:700;padding:3px 8px;border-radius:20px;margin-bottom:8px}
+.tag.p{background:var(--warn);color:var(--fg)}.tag.c{background:var(--ok);color:var(--fg)}.tag.x{background:var(--err-soft);color:var(--fg)}
+.small{font-size:13px;color:var(--muted);margin-top:14px;text-align:center}
+.steps{list-style:none;padding:0;margin:12px 0}
+.steps li{display:flex;gap:12px;padding:10px 0;border-bottom:1px dashed var(--line);font-size:14px}
+.steps li:last-child{border:0}
+.steps i{font-style:normal;flex:none;width:24px;height:24px;border-radius:50%;display:grid;place-items:center;font-size:13px;font-weight:700}
+.steps .d i{background:var(--ok-line);color:#fff}
+.steps .n i{background:var(--warn-line);color:#fff}
+.steps .w i{border:2px solid var(--line);color:var(--muted)}
+.steps small{display:block;color:var(--muted)}
+.mail{border:1px solid var(--line);border-radius:12px;padding:14px;font-size:14px}
+.mail .from{font-size:12px;color:var(--muted)}
+.mail .subj{font-weight:700;font-size:16px;margin:4px 0 10px}
+.mail .row{display:flex;justify-content:space-between;gap:12px;padding:8px 0;border-bottom:1px dashed var(--line)}
+.mail .row:last-child{border:0}
+.mail .row span:last-child{text-align:right;font-weight:600}
+.before{font-size:12px;color:var(--muted);border:1px dashed var(--line);border-radius:10px;padding:10px;margin-top:14px}
+.before s{color:var(--muted)}
+.bubble{background:var(--brand-soft);border-radius:14px 14px 14px 4px;padding:10px 12px;margin-bottom:10px;max-width:88%}
+.side{flex:1;min-width:280px;max-width:440px}
+.side h3{margin:0 0 8px}
+.side ol{padding-left:20px}.side li{margin-bottom:12px}
+.side .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:16px}
+.start{background:none;border:1px solid var(--line);color:var(--fg);border-radius:8px;padding:4px 10px;cursor:pointer;font-size:13px;margin-top:6px}
+.start:hover,.start:focus-visible{border-color:var(--brand)}
+</style>
+</head>
+<body>
+<div class="wrap">
+<p class="note"><a href="../" style="color:inherit">← Volver al caso de estudio</a> · Prototipo conceptual para un caso de estudio UX. Marcas genéricas; no es un sitio oficial ni está afiliado a ninguna agencia o aerolínea.</p>
+
+<div class="phone" id="phone" data-ctx="agencia" aria-label="Prototipo móvil">
+  <div class="appbar"><div class="logo" id="logo">viajes<span>·app</span></div><span class="ctx" id="ctx">Agencia</span></div>
+  <div class="top"><button id="back" aria-label="Regresar" hidden>←</button><span id="title">Pago</span></div>
+
+  <!-- AGENCIA 1. Error de pago rediseñado -->
+  <section class="screen on" id="s-pago" data-ctx="agencia" data-title="Pago">
+    <div class="box warn">
+      <b>Tu pago está en verificación</b><br>
+      Tu banco puede mostrar ya un cargo. <b>No vuelvas a comprar:</b> estamos confirmando tus lugares con la aerolínea.
+    </div>
+    <p>Te avisaremos por correo en máximo 30 minutos.</p>
+    <div class="trip">
+      <span class="tag p">En verificación</span><br>
+      <b>Origen → Destino</b>
+      <p class="muted" style="margin:0">Viaje redondo · 3 viajeros</p>
+    </div>
+    <button class="btn" data-go="s-estado">Ver estado de mi compra</button>
+    <button class="btn sec" data-go="s-chat">Hablar con un agente</button>
+    <p class="small">Si no logramos confirmarla, la cancelamos y liberamos el cargo. No tendrás que llamar a tu banco.</p>
+  </section>
+
+  <!-- AGENCIA 2. Estado de la compra -->
+  <section class="screen" id="s-estado" data-ctx="agencia" data-title="Estado de tu compra">
+    <h2>Estado de tu compra</h2>
+    <ul class="steps">
+      <li class="d"><i>✓</i><div>Pago autorizado por tu banco<small>Puedes ver el cargo como pendiente.</small></div></li>
+      <li class="n"><i>…</i><div>Confirmando con la aerolínea<small>Suele tardar menos de 30 minutos.</small></div></li>
+      <li class="w"><i>3</i><div>Boleto emitido<small>Te llegará por correo con tu código.</small></div></li>
+    </ul>
+    <div class="box warn">Código de la aerolínea: <b>AGE123</b>. Puede tardar en aparecer en su sitio mientras se emite el boleto.</div>
+    <button class="btn" data-go="s-buscar">Buscar en el sitio de la aerolínea</button>
+    <button class="btn sec" data-go="s-chat">Hablar con un agente</button>
+  </section>
+
+  <!-- AEROLÍNEA 3. Mis viajes -->
+  <section class="screen hero" id="s-buscar" data-ctx="aerolinea" data-title="Mis viajes">
+  <div class="formcard">
+    <h2>Encuentra tu reserva</h2>
+    <p class="muted">Usa los datos de tu correo de confirmación.</p>
+    <label for="codigo">Código de reservación</label>
+    <input id="codigo" maxlength="6" placeholder="Ej. ABC123" autocomplete="off">
+    <div class="hint">6 letras y números.</div>
+    <div class="err" id="codigo-err">El código debe tener 6 letras y números.</div>
+    <label for="apellido">Apellido(s)</label>
+    <input id="apellido" placeholder="Ej. García López" autocomplete="off">
+    <div class="hint" id="apellido-hint">Escríbelo como aparece en tu pasaporte o correo.</div>
+    <button class="btn" id="buscar">Buscar mi reserva</button>
+  </div>
+  </section>
+
+  <!-- AEROLÍNEA 4. Reserva de agencia en proceso -->
+  <section class="screen" id="s-agencia" data-ctx="aerolinea" data-title="Tu reserva">
+    <h2>Encontramos tu reserva</h2>
+    <div class="box warn">La hizo tu agencia y el boleto se está emitiendo. Tus lugares están apartados. <b>No necesitas volver a comprar ni llamar.</b></div>
+    <div class="trip">
+      <span class="tag p">En proceso · compra por agencia</span><br>
+      <b>Origen → Destino</b>
+      <p class="muted" style="margin:0">Código: AGE123 · 3 pasajeros</p>
+    </div>
+    <ul class="steps">
+      <li class="d"><i>✓</i><div>Reserva recibida de tu agencia</div></li>
+      <li class="n"><i>…</i><div>Emisión del boleto</div></li>
+    </ul>
+    <button class="btn">Avísame cuando esté lista</button>
+    <button class="btn sec" data-go="s-chat">Tengo dudas, hablar con un agente</button>
+  </section>
+
+  <!-- AEROLÍNEA 5. Reserva cancelada -->
+  <section class="screen" id="s-cancelada" data-ctx="aerolinea" data-title="Tu reserva">
+    <h2>Tu reserva fue cancelada</h2>
+    <div class="trip">
+      <span class="tag x">Cancelada</span><br>
+      <b>Origen → Destino</b>
+      <p class="muted" style="margin:0">Código: CAN123</p>
+    </div>
+    <div class="box bad"><b>Motivo:</b> el pago fue disputado con tu banco.<br><b>Tu dinero:</b> el reembolso lo gestiona tu banco. No se hará ningún otro cargo.</div>
+    <button class="btn" data-go="s-buscar">Volver a Mis viajes</button>
+    <button class="btn sec" data-go="s-chat">Hablar con un agente</button>
+  </section>
+
+  <!-- AEROLÍNEA 6. Error útil -->
+  <section class="screen" id="s-error" data-ctx="aerolinea" data-title="Revisemos tu reserva">
+    <h2>No encontramos tu reserva con esos datos</h2>
+    <div class="box warn">Si ya te hicieron el cargo, no vuelvas a comprar. Tu compra puede estar en proceso.</div>
+    <p><b>Causas más comunes:</b></p>
+    <ol class="causes">
+      <li><b>Compraste por agencia.</b> La reserva puede tardar en aparecer mientras se emite el boleto. Revisa el estado en tu agencia.</li>
+      <li><b>Apellido distinto.</b> Escríbelo como aparece en tu correo.</li>
+      <li><b>Código mal escrito.</b> Revisa que sean 6 letras y números.</li>
+    </ol>
+    <button class="btn" id="reintentar">Revisar mis datos</button>
+    <button class="btn sec" data-go="s-chat">Hablar con un agente por chat</button>
+    <p class="small">¿Prefieres llamar? México: 55 0000 0000</p>
+  </section>
+
+  <!-- AEROLÍNEA 7. Encontrada -->
+  <section class="screen" id="s-ok" data-ctx="aerolinea" data-title="Tu reserva">
+    <h2>Tu reserva</h2>
+    <div class="box ok">Reserva confirmada.</div>
+    <div class="trip">
+      <span class="tag c">Confirmada</span><br>
+      <b>Origen → Destino</b>
+      <p class="muted" style="margin:0">Código: <span id="codigo-ok">ABC123</span></p>
+    </div>
+    <button class="btn">Hacer check-in</button>
+    <button class="btn sec" data-go="s-buscar">Volver</button>
+  </section>
+
+  <!-- CORREO 8. Cancelación explícita -->
+  <section class="screen" id="s-correo" data-ctx="correo" data-title="Bandeja de entrada">
+    <div class="mail">
+      <div class="from">De: aerolínea · reservas</div>
+      <div class="subj">Tu reserva CAN123 fue cancelada</div>
+      <div class="row"><span>Estado</span><span>Cancelada</span></div>
+      <div class="row"><span>Motivo</span><span>Pago disputado con tu banco</span></div>
+      <div class="row"><span>Tu dinero</span><span>El reembolso lo gestiona tu banco</span></div>
+      <div class="row"><span>Qué puedes hacer</span><span>Comprar de nuevo o escribirnos</span></div>
+    </div>
+    <div class="before"><b>Antes:</b> el correo solo mostraba <s>Monto pagado: $0.00</s>, sin decir que era una cancelación.</div>
+    <button class="btn" data-go="s-chat">Escribir a la aerolínea</button>
+  </section>
+
+  <!-- 9. Chat -->
+  <section class="screen" id="s-chat" data-ctx="aerolinea" data-title="Chat de ayuda">
+    <div class="bubble">Hola, soy un agente. Veo que tienes un cargo y tu reserva aún no aparece. Ya tengo tu código; reviso el estado con tu agencia.</div>
+    <p class="small">Pantalla de referencia: el chat llega con el contexto, sin que la persona tenga que explicar todo de nuevo.</p>
+    <button class="btn sec" id="chat-back">Volver</button>
+  </section>
+</div>
+
+<aside class="side">
+  <div class="card">
+    <h3>Cómo probarlo</h3>
+    <p class="muted">Pide a cada persona que piense en voz alta. No le expliques la pantalla. Usa el botón de cada tarea para empezar.</p>
+    <ol>
+      <li><b>Error al pagar.</b> "Compraste 3 boletos en una app de viajes. Al pagar ves esta pantalla y tu banco te avisa de un cargo. ¿Qué harías?"<br><span class="muted">Éxito: no reintenta la compra; revisa el estado o espera el correo.</span><br><button class="start" data-start="s-pago">Empezar tarea 1</button></li>
+      <li><b>Revisar la reserva.</b> "Te llegó un correo de la aerolínea con el código AGE123. Tu apellido es García López. Revisa tu reserva."<br><span class="muted">Éxito: entiende que su reserva existe y está en proceso, sin llamar.</span><br><button class="start" data-start="s-buscar">Empezar tarea 2</button></li>
+      <li><b>Entender el correo.</b> "Recibiste este correo. Explica con tus palabras qué pasó y qué pasará con tu dinero."<br><span class="muted">Éxito: dice que se canceló, por qué y quién gestiona el reembolso.</span><br><button class="start" data-start="s-correo">Empezar tarea 3</button></li>
+    </ol>
+    <p class="muted">Al final pregunta: del 1 al 5, ¿qué tan seguro te sentirías de que tu dinero y tu viaje están a salvo?</p>
+  </div>
+  <div class="card">
+    <h3>Qué anotar</h3>
+    <ol>
+      <li>¿Completó la tarea? (sí / con ayuda / no)</li>
+      <li>Tiempo aproximado</li>
+      <li>Dónde dudó o se equivocó</li>
+      <li>Frases textuales que diga</li>
+    </ol>
+    <p class="muted">Otros códigos para explorar: CAN123 (cancelada) o cualquier código con un solo apellido (error).</p>
+  </div>
+</aside>
+</div>
+
+<script>
+const hist=[];
+const $=id=>document.getElementById(id);
+const brands={agencia:['viajes','·app','Agencia'],aerolinea:['aero','línea','Aerolínea'],correo:['correo','',"Correo"]};
+function go(id,push=true){
+  const cur=document.querySelector('.screen.on');
+  if(push&&cur&&cur.id!==id)hist.push(cur.id);
+  document.querySelectorAll('.screen').forEach(s=>s.classList.toggle('on',s.id===id));
+  const s=$(id),ctx=s.dataset.ctx,b=brands[ctx];
+  $('phone').dataset.ctx=ctx;
+  $('logo').innerHTML=b[0]+'<span>'+b[1]+'</span>';
+  $('ctx').textContent=b[2];
+  $('title').textContent=s.dataset.title;
+  $('back').hidden=hist.length===0;
+}
+function reset(){
+  document.querySelectorAll('input').forEach(i=>{i.value='';i.classList.remove('bad')});
+  $('codigo-err').style.display='none';$('apellido-hint').classList.remove('flash');
+  hist.length=0;
+}
+document.querySelectorAll('[data-go]').forEach(b=>b.addEventListener('click',()=>go(b.dataset.go)));
+document.querySelectorAll('[data-start]').forEach(b=>b.addEventListener('click',()=>{reset();go(b.dataset.start,false)}));
+$('back').addEventListener('click',()=>{if(hist.length)go(hist.pop(),false)});
+$('chat-back').addEventListener('click',()=>{if(hist.length)go(hist.pop(),false)});
+$('codigo').addEventListener('input',e=>{e.target.value=e.target.value.toUpperCase().replace(/[^A-Z0-9]/g,'')});
+$('buscar').addEventListener('click',()=>{
+  const code=$('codigo').value.trim(),ap=$('apellido').value.trim();
+  const okCode=/^[A-Z0-9]{6}$/.test(code);
+  $('codigo').classList.toggle('bad',!okCode);$('codigo-err').style.display=okCode?'none':'block';
+  if(!okCode||!ap)return;
+  if(code==='AGE123')go('s-agencia');
+  else if(code==='CAN123')go('s-cancelada');
+  else if(ap.split(/\s+/).length>=2){$('codigo-ok').textContent=code;go('s-ok')}
+  else go('s-error');
+});
+$('reintentar').addEventListener('click',()=>{
+  hist.length=0;go('s-buscar',false);
+  $('apellido-hint').classList.add('flash');$('apellido').focus();
+});
+</script>
+</body>
+</html>
