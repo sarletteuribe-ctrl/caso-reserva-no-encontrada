@@ -69,6 +69,7 @@ ol.causes{padding-left:20px;margin:8px 0 0}ol.causes li{margin-bottom:8px}
 .side .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:16px}
 .start{background:none;border:1px solid var(--line);color:var(--fg);border-radius:8px;padding:4px 10px;cursor:pointer;font-size:13px;margin-top:6px}
 .start:hover,.start:focus-visible{border-color:var(--brand)}
+body.prueba .side,body.prueba .note{display:none}
 </style>
 </head>
 <body>
@@ -268,6 +269,9 @@ $('reintentar').addEventListener('click',()=>{
   hist.length=0;go('s-buscar',false);
   $('apellido-hint').classList.add('flash');$('apellido').focus();
 });
+// Modo prueba: ?prueba oculta el panel; ?tarea=1|2|3 abre la pantalla de inicio de cada tarea
+(()=>{const q=new URLSearchParams(location.search);const t={'1':'s-pago','2':'s-buscar','3':'s-correo'}[q.get('tarea')];
+if(q.has('prueba')||t)document.body.classList.add('prueba');if(t){reset();go(t,false)}})();
 </script>
 </body>
 </html>
